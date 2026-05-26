@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desinformação Digital & IA</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0e1318;
+      --surface2: #131920;
+      --accent: #e63946;
+      --accent2: #f4a261;
+      --accent3: #2ec4b6;
+      --text: #e8edf2;
+      --text-muted: #7a8a99;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, .display-font {
+      font-family: 'Syne', sans-serif;
+    }
+
+    
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    
+    .navbar {
+      background: rgba(8, 11, 16, 0.92) !important;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .navbar-brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--text) !important;
+      letter-spacing: -0.02em;
+    }
+
+    .navbar-brand span {
+      color: var(--accent);
+    }
+
+    .nav-link {
+      color: var(--text-muted) !important;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text) !important; }
+
+    
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 100px 0 60px;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(230,57,70,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230,57,70,0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(60px); }
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(230,57,70,0.12) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(230,57,70,0.3);
+      padding: 4px 14px;
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      animation: fadeUp 0.6s 0.15s ease both;
+    }
+
+    .hero h1 .line-red { color: var(--accent); }
+    .hero h1 .line-teal { color: var(--accent3); }
+
+    .hero-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.8;
+      margin-top: 1.5rem;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.45s ease both;
+    }
+
+    .stat-item {}
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    .hero-scroll {
+      margin-top: 4rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeUp 0.6s 0.6s ease both;
+    }
+
+    .scroll-line {
+      width: 40px;
+      height: 1px;
+      background: var(--text-muted);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    
+    section { padding: 100px 0; }
+
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.9;
+      max-width: 580px;
+      margin-top: 1rem;
+    }
+
+    
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    
+    .desinfo-section { background: var(--bg); }
+
+    .desinfo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .desinfo-card:hover {
+      border-color: rgba(230,57,70,0.3);
+      transform: translateY(-4px);
+    }
+
+    .desinfo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .card-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: rgba(230,57,70,0.12);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .desinfo-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.75rem;
+    }
+
+    .desinfo-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+    }
+
+
+    .deepfake-section {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .deepfake-section::before {
+      content: 'DEEPFAKE';
+      position: absolute;
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(6rem, 18vw, 14rem);
+      font-weight: 800;
+      color: rgba(230,57,70,0.03);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: -0.05em;
+    }
+
+    .df-feature {
+      border-left: 2px solid var(--accent);
+      padding: 1.5rem 1.5rem 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      background: rgba(230,57,70,0.03);
+      transition: background 0.3s;
+    }
+
+    .df-feature:hover { background: rgba(230,57,70,0.07); }
+
+    .df-feature h5 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .df-feature p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .df-visual {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .face-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .face-cell {
+      aspect-ratio: 1;
+      background: var(--surface2);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .face-cell.fake::after {
+      content: 'FAKE';
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(230,57,70,0.15);
+      padding: 1px 5px;
+      letter-spacing: 0.1em;
+    }
+
+    .face-cell.real::after {
+      content: 'REAL';
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: var(--accent3);
+      background: rgba(46,196,182,0.15);
+      padding: 1px 5px;
+      letter-spacing: 0.1em;
+    }
+
+    .df-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+    }
+
+    .df-stat-row span:first-child { color: var(--text-muted); }
+    .df-stat-row span:last-child {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    
+    .alert-box {
+      background: rgba(230,57,70,0.06);
+      border: 1px solid rgba(230,57,70,0.2);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .alert-box::before {
+      content: '⚠';
+      color: var(--accent);
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    
+    .corporate-section { background: var(--bg); }
+
+    .corp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .corp-table thead th {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .corp-table tbody td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      line-height: 1.6;
+      vertical-align: top;
+    }
+
+    .corp-table tbody tr:hover td { background: var(--surface); }
+
+    .corp-table td:first-child {
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .badge-risk {
+      font-size: 0.65rem;
+      padding: 3px 10px;
+      border-radius: 2px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .risk-alto { background: rgba(230,57,70,0.15); color: var(--accent); }
+    .risk-medio { background: rgba(244,162,97,0.15); color: var(--accent2); }
+    .risk-baixo { background: rgba(46,196,182,0.15); color: var(--accent3); }
+
+    
+    .practice-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.75rem;
+      height: 100%;
+      transition: border-color 0.3s;
+    }
+
+    .practice-card:hover { border-color: rgba(46,196,182,0.3); }
+
+    .practice-card::before {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      margin-bottom: 1.5rem;
+    }
+
+    .practice-card h5 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .practice-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .practice-card ul li {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    .practice-card ul li:last-child { border-bottom: none; }
+
+    .practice-card ul li::before {
+      content: '→ ';
+      color: var(--accent3);
+      font-weight: 700;
+    }
+
+    
+    .timeline { position: relative; padding-left: 2rem; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.75rem;
+      top: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(230,57,70,0.5);
+    }
+
+    .timeline-year {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    
+    .cta-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      line-height: 1.8;
+    }
+
+    .btn-outline-accent {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: transparent;
+      padding: 10px 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+      display: inline-block;
+    }
+
+    .btn-outline-accent:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-solid-accent {
+      border: 1px solid var(--accent);
+      color: white;
+      background: var(--accent);
+      padding: 10px 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.2s, opacity 0.2s;
+      display: inline-block;
+    }
+
+    .btn-solid-accent:hover { opacity: 0.85; color: white; }
+
+    
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    footer .footer-brand span { color: var(--accent); }
+
+    
+    .navbar-toggler {
+      border-color: var(--border) !important;
+    }
+
+    .navbar-toggler-icon {
+      filter: invert(1);
+    }
+
+    
+    .progress-custom {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 0;
+      margin-bottom: 1rem;
+    }
+
+    .progress-bar-custom {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 1.5s ease;
+    }
+
+    .prog-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+
+    .prog-label span:last-child {
+      color: var(--accent);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+    }
+
+    
+    .blockquote-custom {
+      border-left: 3px solid var(--accent3);
+      padding: 1rem 0 1rem 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .blockquote-custom p {
+      font-size: 1rem;
+      line-height: 1.7;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .blockquote-custom cite {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: normal;
+      letter-spacing: 0.05em;
+    }
+
+    
+    @media (max-width: 768px) {
+      .hero-stats { gap: 1.5rem; }
+      .face-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-md fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">DESIN<span>FO</span>.AI</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-3">
+          <li class="nav-item"><a class="nav-link" href="#desinfo">Desinformação</a></li>
+          <li class="nav-item"><a class="nav-link" href="#deepfake">Deepfakes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#corporativo">Corporativo</a></li>
+          <li class="nav-item"><a class="nav-link" href="#boas-praticas">Boas Práticas</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="container position-relative">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="hero-tag">Relatório 2024 — Inteligência Artificial &amp; Desinformação</div>
+          <h1>
+            A Era da<br>
+            <span class="line-red">Mentira</span><br>
+            <span class="line-teal">Sintética</span>
+          </h1>
+          <p class="hero-sub">
+            Conteúdos gerados por IA, deepfakes e o uso irresponsável de tecnologias inteligentes 
+            estão redefinindo os limites entre realidade e ficção — com consequências profundas 
+            para a sociedade, a política e o mundo corporativo.
+          </p>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num">500%</div>
+              <div class="stat-label">Aumento de deepfakes<br>desde 2019</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">96%</div>
+              <div class="stat-label">Deepfakes são<br>conteúdo adulto</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">$78B</div>
+              <div class="stat-label">Perdas corporativas<br>por fraude com IA</div>
+            </div>
+          </div>
+          <div class="hero-scroll">
+            <div class="scroll-line"></div>
+            Role para explorar
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="desinfo" class="desinfo-section">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-lg-6">
+          <div class="section-label">01 — Desinformação Digital</div>
+          <h2 class="section-title">Conteúdos gerados<br>por IA como arma</h2>
+          <p class="section-desc">
+            A democratização das ferramentas de IA generativa criou um ambiente onde qualquer pessoa 
+            pode produzir texto, imagem, áudio e vídeo falsos de maneira convincente, rápida e barata. 
+            Isso transformou radicalmente o ecossistema de informação global.
+          </p>
+        </div>
+        <div class="col-lg-5 offset-lg-1 d-flex align-items-end">
+          <div class="alert-box w-100 mt-4 mt-lg-0">
+            Segundo o MIT Media Lab, notícias falsas se espalham <strong style="color:var(--text)">6 vezes mais rápido</strong> 
+            do que notícias verdadeiras nas redes sociais — e conteúdos gerados por IA amplificam 
+            ainda mais esse fenômeno.
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="desinfo-card">
+            <div class="card-num">01</div>
+            <div class="card-icon">📰</div>
+            <h4>Notícias Falsas Automatizadas</h4>
+            <p>Modelos de linguagem são usados para gerar artigos jornalísticos falsos em escala industrial, com estilo convincente e referências fictícias que parecem legítimas.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="desinfo-card">
+            <div class="card-num">02</div>
+            <div class="card-icon">🖼️</div>
+            <h4>Imagens Sintéticas Virais</h4>
+            <p>Ferramentas como Midjourney e DALL-E permitem criar imagens fotorrealistas de eventos que nunca aconteceram, manipulando narrativas políticas e sociais.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="desinfo-card">
+            <div class="card-num">03</div>
+            <div class="card-icon">🤖</div>
+            <h4>Bots de Desinformação</h4>
+            <p>Redes de contas automatizadas com perfis gerados por IA disseminam narrativas falsas de forma coordenada, simulando debates orgânicos e manipulando a opinião pública.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="desinfo-card">
+            <div class="card-num">04</div>
+            <div class="card-icon">🎯</div>
+            <h4>Micro-targeting Manipulador</h4>
+            <p>Algoritmos identificam vulnerabilidades psicológicas individuais e entregam desinformação personalizada, tornando a manipulação mais eficaz e difícil de detectar.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-lg-6">
+          <h4 class="mb-4" style="font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700;">Marcos da Desinformação por IA</h4>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-year">2017</div>
+              <div class="timeline-title">Primeiros deepfakes públicos</div>
+              <div class="timeline-desc">Surgem os primeiros vídeos deepfake virais em plataformas como Reddit, dando início à era da mídia sintética.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">2019</div>
+              <div class="timeline-title">GPT-2 e a "ameaça ao texto"</div>
+              <div class="timeline-desc">A OpenAI retarda o lançamento do GPT-2 por considerar o modelo perigoso para geração de desinformação em massa.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">2022</div>
+              <div class="timeline-title">Imagens de IA nas eleições</div>
+              <div class="timeline-desc">Campanha nas eleições brasileiras utiliza imagens geradas por IA para criar narrativas falsas sobre candidatos.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">2024</div>
+              <div class="timeline-title">Deepfakes em escala eleitoral</div>
+              <div class="timeline-desc">Múltiplos países registram uso de deepfakes de candidatos para manipulação eleitoral em campanhas coordenadas.</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5 offset-lg-1 mt-4 mt-lg-0">
+          <h4 class="mb-4" style="font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700;">Velocidade de Propagação</h4>
+          <div>
+            <div class="prog-label"><span>Notícia falsa gerada por IA</span><span>94%</span></div>
+            <div class="progress-custom"><div class="progress-bar-custom" style="width:94%"></div></div>
+
+            <div class="prog-label"><span>Notícia falsa tradicional</span><span>78%</span></div>
+            <div class="progress-custom"><div class="progress-bar-custom" style="width:78%"></div></div>
+
+            <div class="prog-label"><span>Notícia verdadeira verificada</span><span>32%</span></div>
+            <div class="progress-custom"><div class="progress-bar-custom" style="width:32%"></div></div>
+
+            <div class="prog-label"><span>Conteúdo com fact-check</span><span>18%</span></div>
+            <div class="progress-custom"><div class="progress-bar-custom" style="width:18%"></div></div>
+          </div>
+
+          <div class="blockquote-custom mt-4">
+            <p>"Estamos entrando em uma era em que ver não é mais crer. A autenticidade se tornou o bem mais escasso da economia da atenção."</p>
+            <cite>— Nina Schick, autora de "Deep Fakes and the Infocalypse"</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="deepfake" class="deepfake-section">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-12">
+          <div class="section-label">02 — Deepfakes</div>
+          <h2 class="section-title">Quando a realidade<br>se torna opcional</h2>
+        </div>
+      </div>
+
+      <div class="row g-5 align-items-start">
+        <div class="col-lg-5">
+          <div class="df-visual">
+            <p style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-muted); margin-bottom:1rem;">Você consegue identificar?</p>
+            <div class="face-grid">
+              <div class="face-cell real">👤</div>
+              <div class="face-cell fake">👤</div>
+              <div class="face-cell fake">👤</div>
+              <div class="face-cell real">👤</div>
+              <div class="face-cell fake">👤</div>
+              <div class="face-cell real">👤</div>
+            </div>
+            <div class="df-stat-row">
+              <span>Taxa de detecção humana</span>
+              <span>~50%</span>
+            </div>
+            <div class="df-stat-row">
+              <span>Acurácia de detecção por IA</span>
+              <span>~91%</span>
+            </div>
+            <div class="df-stat-row">
+              <span>Novos deepfakes por dia (2024)</span>
+              <span>+500k</span>
+            </div>
+            <div class="df-stat-row">
+              <span>Tempo médio p/ criar deepfake</span>
+              <span>&lt;5min</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <p class="section-desc mb-4">
+            Deepfakes são conteúdos audiovisuais gerados ou manipulados por inteligência artificial para 
+            substituir rostos, vozes e expressões de pessoas reais por falsas — com um realismo assustador.
+          </p>
+
+          <div class="df-feature">
+            <h5>🎭 Deepfakes Políticos</h5>
+            <p>Vídeos falsos de líderes mundiais anunciando guerras, resignações ou declarações escandalosas causam pânico e instabilidade antes mesmo de serem desmentidos. O dano reputacional é imediato e duradouro.</p>
+          </div>
+
+          <div class="df-feature">
+            <h5>💼 Fraude Corporativa por Voz</h5>
+            <p>Em 2019, um CEO britânico foi enganado por criminosos que clonaram a voz de seu superior para autorizar uma transferência de €220.000. Casos similares multiplicaram-se globalmente desde então.</p>
+          </div>
+
+          <div class="df-feature">
+            <h5>⚖️ Deepfakes Judiciais</h5>
+            <p>Evidências fabricadas com deepfakes já foram apresentadas em processos judiciais em diferentes países, criando uma crise sem precedentes para os sistemas de prova e autenticidade jurídica.</p>
+          </div>
+
+          <div class="df-feature">
+            <h5>🔒 Pornografia Não-Consensual</h5>
+            <p>96% de todos os deepfakes na internet são pornográficos e não-consensuais. Celebridades e pessoas comuns são vítimas de um crime que causa dano psicológico grave e é de difícil remoção.</p>
+          </div>
+
+          <div class="alert-box mt-3">
+            A Coreia do Sul criminalizou a produção e distribuição de deepfakes sexuais em 2020. Brasil, União Europeia e EUA avançam em legislações similares, mas a tecnologia evolui mais rápido que as leis.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="corporativo" class="corporate-section">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-lg-7">
+          <div class="section-label">03 — Uso Incorreto no Corporativo</div>
+          <h2 class="section-title">IA nas empresas:<br>poder sem responsabilidade</h2>
+          <p class="section-desc">
+            A adoção acelerada de IA no ambiente corporativo trouxe ganhos de produtividade, 
+            mas também novos riscos: viés algorítmico, violação de dados, decisões automáticas 
+            sem supervisão humana e dependência tecnológica cega.
+          </p>
+        </div>
+      </div>
+
+      <div class="row mb-5">
+        <div class="col-12">
+          <div style="overflow-x:auto; border:1px solid var(--border); border-radius:4px;">
+            <table class="corp-table">
+              <thead>
+                <tr>
+                  <th>Risco</th>
+                  <th>Descrição</th>
+                  <th>Setor mais afetado</th>
+                  <th>Nível</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Viés algorítmico em RH</td>
+                  <td>Sistemas de triagem de currículos reproduzem discriminações históricas por gênero, raça e origem.</td>
+                  <td>Recursos Humanos</td>
+                  <td><span class="badge-risk risk-alto">Alto</span></td>
+                </tr>
+                <tr>
+                  <td>Vazamento de dados sensíveis</td>
+                  <td>Funcionários inserem dados confidenciais em ferramentas de IA pública, expondo segredos comerciais.</td>
+                  <td>Jurídico / Financeiro</td>
+                  <td><span class="badge-risk risk-alto">Alto</span></td>
+                </tr>
+                <tr>
+                  <td>Decisões sem supervisão humana</td>
+                  <td>Crédito negado, demissões e preços definidos por IA sem possibilidade de revisão humana.</td>
+                  <td>Financeiro / Varejo</td>
+                  <td><span class="badge-risk risk-alto">Alto</span></td>
+                </tr>
+                <tr>
+                  <td>Alucinações em contexto crítico</td>
+                  <td>Modelos de IA inventam fatos, leis ou referências que são aceitos sem verificação por colaboradores.</td>
+                  <td>Saúde / Jurídico</td>
+                  <td><span class="badge-risk risk-alto">Alto</span></td>
+                </tr>
+                <tr>
+                  <td>Automação sem planejamento</td>
+                  <td>Eliminação de postos de trabalho sem políticas de requalificação ou impacto social mapeado.</td>
+                  <td>Manufatura / Logística</td>
+                  <td><span class="badge-risk risk-medio">Médio</span></td>
+                </tr>
+                <tr>
+                  <td>Dependência de fornecedor único</td>
+                  <td>Infraestrutura crítica dependente de um único provedor de IA, sem planos de contingência.</td>
+                  <td>Tecnologia</td>
+                  <td><span class="badge-risk risk-medio">Médio</span></td>
+                </tr>
+                <tr>
+                  <td>Falta de explicabilidade</td>
+                  <td>Modelos "caixa-preta" tomam decisões que nenhum colaborador consegue auditar ou explicar.</td>
+                  <td>Regulatório</td>
+                  <td><span class="badge-risk risk-medio">Médio</span></td>
+                </tr>
+                <tr>
+                  <td>Plágio e propriedade intelectual</td>
+                  <td>Conteúdos gerados por IA utilizam obras protegidas sem licença, expondo empresas a processos.</td>
+                  <td>Marketing / Criativo</td>
+                  <td><span class="badge-risk risk-baixo">Moderado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-12 mb-2">
+          <h4 style="font-family:'Syne',sans-serif; font-weight:700;">Casos Reais de Uso Indevido</h4>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="desinfo-card">
+            <div class="card-icon">⚖️</div>
+            <h4>Amazon (2018)</h4>
+            <p>Sistema de IA para triagem de currículos foi desativado após descoberta de viés sistemático contra mulheres, favorecendo candidatos masculinos por ter sido treinado com dados históricos desbalanceados.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="desinfo-card">
+            <div class="card-icon">💬</div>
+            <h4>Samsung (2023)</h4>
+            <p>Engenheiros vazaram código-fonte proprietário ao inserir dados confidenciais no ChatGPT para depuração de bugs, resultando em dados corporativos sensíveis nos servidores de terceiros.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="desinfo-card">
+            <div class="card-icon">🏦</div>
+            <h4>Banco Escocês (2023)</h4>
+            <p>Advogados foram multados após submeterem ao tribunal citações jurídicas geradas pelo ChatGPT — todas fictícias. O juiz ordenou punição por apresentar documentos com "alucinações" como evidência real.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="boas-praticas" style="background:var(--surface); padding:100px 0;">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-lg-6">
+          <div class="section-label">04 — Como se Proteger</div>
+          <h2 class="section-title">Boas práticas para<br>um uso responsável</h2>
+          <p class="section-desc">
+            A resposta à desinformação e ao uso irresponsável de IA não é rejeitar a tecnologia, 
+            mas adotá-la com consciência crítica, governança robusta e educação digital contínua.
+          </p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="practice-card">
+            <h5>🔍 Para Cidadãos</h5>
+            <ul>
+              <li>Verifique a fonte antes de compartilhar</li>
+              <li>Use ferramentas de fact-checking (Agência Lupa, Aos Fatos)</li>
+              <li>Desconfie de vídeos com falhas nos olhos ou boca</li>
+              <li>Busque a imagem de origem no Google Images</li>
+              <li>Leia além do título da notícia</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="practice-card">
+            <h5>🏢 Para Empresas</h5>
+            <ul>
+              <li>Crie política interna de uso de IA</li>
+              <li>Nunca insira dados sensíveis em IA pública</li>
+              <li>Audite modelos para viés regularmente</li>
+              <li>Mantenha supervisão humana em decisões críticas</li>
+              <li>Treine equipes em literacia digital</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="practice-card">
+            <h5>🛡️ Detecção de Deepfakes</h5>
+            <ul>
+              <li>Observe piscar de olhos irregular</li>
+              <li>Verifique bordas do rosto e cabelo</li>
+              <li>Use ferramentas como Deepware ou Sensity</li>
+              <li>Confira metadados do arquivo</li>
+              <li>Busque inconsistências de iluminação</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="practice-card">
+            <h5>📋 Governança de IA</h5>
+            <ul>
+              <li>Adote frameworks como o EU AI Act</li>
+              <li>Documente decisões automatizadas</li>
+              <li>Garanta direito de revisão humana</li>
+              <li>Implemente logs de auditoria</li>
+              <li>Estabeleça comitê de ética em IA</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-12">
+          <h4 class="mb-4" style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem;">Ferramentas e Recursos Recomendados</h4>
+        </div>
+        <div class="col-md-4">
+          <div style="border:1px solid var(--border); border-radius:4px; padding:1.5rem; background:var(--bg);">
+            <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent3); margin-bottom:0.5rem;">Fact-checking</div>
+            <div style="font-size:0.85rem; color:var(--text-muted); line-height:2;">
+              Agência Lupa · Aos Fatos · Snopes<br>
+              AFP Checamos · PolitiFact<br>
+              Full Fact
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mt-3 mt-md-0">
+          <div style="border:1px solid var(--border); border-radius:4px; padding:1.5rem; background:var(--bg);">
+            <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent3); margin-bottom:0.5rem;">Detecção de Deepfake</div>
+            <div style="font-size:0.85rem; color:var(--text-muted); line-height:2;">
+              Deepware Scanner · Sensity AI<br>
+              Microsoft Video Authenticator<br>
+              Hive Moderation
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mt-3 mt-md-0">
+          <div style="border:1px solid var(--border); border-radius:4px; padding:1.5rem; background:var(--bg);">
+            <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent3); margin-bottom:0.5rem;">Legislação &amp; Referências</div>
+            <div style="font-size:0.85rem; color:var(--text-muted); line-height:2;">
+              EU AI Act · LGPD Brasil<br>
+              Marco Legal da IA (PL 2338)<br>
+              NIST AI Risk Management Framework
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <h2>A desinformação<br>prospera no silêncio</h2>
+      <p>Compartilhe esse conteúdo. Conscientização coletiva é a primeira linha de defesa contra a manipulação digital.</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="#desinfo" class="btn-solid-accent">Ler novamente</a>
+        <a href="#boas-praticas" class="btn-outline-accent">Ver boas práticas</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="footer-brand">DESIN<span>FO</span>.AI</div>
+          <div style="font-size:0.72rem; margin-top:4px;">Educação Digital para um mundo mais crítico</div>
+        </div>
+        <div class="col-md-4 text-center mb-3 mb-md-0">
+          <div style="font-size:0.72rem;">
+            As estatísticas apresentadas são baseadas em relatórios<br>
+            de MIT Media Lab, Sensity AI e World Economic Forum.
+          </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <div style="font-size:0.72rem;">
+            Conteúdo educacional · 2026<br>
+            PROJETO NEXUS FAPAM — Liçença GNU
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const el = document.querySelector(a.getAttribute('href'));
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.progress-bar-custom').forEach(bar => {
+            bar.style.width = bar.style.width;
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.progress-custom').forEach(el => observer.observe(el));
+
+    
+    const fadeObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.desinfo-card, .df-feature, .practice-card, .timeline-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      fadeObserver.observe(el);
+    });
+  </script>
+</body>
+</html>
